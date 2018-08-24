@@ -1,6 +1,7 @@
 require 'hoe'
 require './lib/csvreader/version.rb'
 
+Hoe.plugin :gemspec
 Hoe.spec 'csvreader' do
 
   self.version = CsvReader::VERSION
