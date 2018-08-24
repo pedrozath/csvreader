@@ -20,14 +20,14 @@ class BufferIO   ## todo: find a better name - why? why not? is really just for 
 
   def peek
     if @buf.size == 0 && @io.eof?
-      puts "peek - hitting eof!!!"
+      # puts "peek - hitting eof!!!"
       return  "\0"   ## return NUL char (0) for now
     end
 
     if @buf.size == 0
        c = @io.getc
        @buf.push( c )
-       ## puts "peek - fill buffer >#{c}< (#{c.ord})"
+       # puts "peek - fill buffer >#{c}< (#{c.ord})"
     end
 
     @buf.first

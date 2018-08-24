@@ -16,7 +16,7 @@ CR	         = "\r"     ##   \r == ASCII 0x0D (hex) 13 (dec) = CR (Carriage retur
 
 def self.parse( data, sep:  Csv.config.sep,
                       trim: Csv.config.trim? )
-  puts "parse:"
+  # puts "parse:"
   pp data
 
   parser = new
@@ -26,7 +26,7 @@ end
 
 def self.parse_line( data, sep:  Csv.config.sep,
                            trim: Csv.config.trim? )
-  puts "parse_line:"
+  # puts "parse_line:"
 
   parser = new
   records = parser.parse( data, sep: sep, trim: trim, limit: 1 )
@@ -73,7 +73,7 @@ def parse_field( io, sep: ',' )
   if (c=io.peek; c=="," || c==LF || c==CR || io.eof?) ## empty field
      ## return value; do nothing
   elsif io.peek == DOUBLE_QUOTE
-    puts "start double_quote field - peek >#{io.peek}< (#{io.peek.ord})"
+    # puts "start double_quote field - peek >#{io.peek}< (#{io.peek.ord})"
     io.getc  ## eat-up double_quote
 
     loop do
@@ -94,18 +94,18 @@ def parse_field( io, sep: ',' )
 
     ## note: always eat-up all trailing spaces (" ") and tabs (\t)
     skip_spaces( io )
-    puts "end double_quote field - peek >#{io.peek}< (#{io.peek.ord})"
+    # puts "end double_quote field - peek >#{io.peek}< (#{io.peek.ord})"
   else
-    puts "start reg field - peek >#{io.peek}< (#{io.peek.ord})"
+    # puts "start reg field - peek >#{io.peek}< (#{io.peek.ord})"
     ## consume simple value
     ##   until we hit "," or "\n" or "\r"
     ##    note: will eat-up quotes too!!!
     while (c=io.peek; !(c=="," || c==LF || c==CR || io.eof?))
-      puts "  add char >#{io.peek}< (#{io.peek.ord})"
+      # puts "  add char >#{io.peek}< (#{io.peek.ord})"
       value << io.getc   ## eat-up all spaces (" ") and tabs (\t)
     end
     value = value.strip   ## strip all trailing spaces
-    puts "end reg field - peek >#{io.peek}< (#{io.peek.ord})"
+    # puts "end reg field - peek >#{io.peek}< (#{io.peek.ord})"
   end
 
   value
@@ -120,7 +120,7 @@ def parse_field_strict( io )
   if (c=io.peek; c=="," || c==LF || c==CR || io.eof?) ## empty field
      ## return value; do nothing
   elsif io.peek == DOUBLE_QUOTE
-    puts "start double_quote field (strict) - peek >#{io.peek}< (#{io.peek.ord})"
+    # puts "start double_quote field (strict) - peek >#{io.peek}< (#{io.peek.ord})"
     io.getc  ## eat-up double_quote
 
     loop do
@@ -138,16 +138,16 @@ def parse_field_strict( io )
         break
       end
     end
-    puts "end double_quote field (strict) - peek >#{io.peek}< (#{io.peek.ord})"
+    # puts "end double_quote field (strict) - peek >#{io.peek}< (#{io.peek.ord})"
   else
-    puts "start reg field (strict) - peek >#{io.peek}< (#{io.peek.ord})"
+    # puts "start reg field (strict) - peek >#{io.peek}< (#{io.peek.ord})"
     ## consume simple value
     ##   until we hit "," or "\n" or "\r" or stroy "\"" double quote
     while (c=io.peek; !(c=="," || c==LF || c==CR || c==DOUBLE_QUOTE || io.eof?))
-      puts "  add char >#{io.peek}< (#{io.peek.ord})"
+      # puts "  add char >#{io.peek}< (#{io.peek.ord})"
       value << io.getc
     end
-    puts "end reg field (strict) - peek >#{io.peek}< (#{io.peek.ord})"
+    # puts "end reg field (strict) - peek >#{io.peek}< (#{io.peek.ord})"
   end
 
   value
@@ -160,7 +160,7 @@ def parse_record( io, sep: ',' )
 
   loop do
      value = parse_field( io, sep: sep )
-     puts "value: »#{value}«"
+     # puts "value: »#{value}«"
      values << value
 
      if io.eof?
@@ -171,7 +171,7 @@ def parse_record( io, sep: ',' )
      elsif io.peek == ","
        io.getc   ## eat-up FS(,)
      else
-       puts "*** csv parse error: found >#{io.peek} (#{io.peek.ord})< - FS (,) or RS (\\n) expected!!!!"
+       # puts "*** csv parse error: found >#{io.peek} (#{io.peek.ord})< - FS (,) or RS (\\n) expected!!!!"
        exit(1)
      end
   end
@@ -185,7 +185,7 @@ def parse_record_strict( io )
 
   loop do
      value = parse_field_strict( io )
-     puts "value: »#{value}«"
+     # puts "value: »#{value}«"
      values << value
 
      if io.eof?
@@ -196,7 +196,7 @@ def parse_record_strict( io )
      elsif io.peek == ","
        io.getc   ## eat-up FS(,)
      else
-       puts "*** csv parse error (strict): found >#{io.peek} (#{io.peek.ord})< - FS (,) or RS (\\n) expected!!!!"
+       # puts "*** csv parse error (strict): found >#{io.peek} (#{io.peek.ord})< - FS (,) or RS (\\n) expected!!!!"
        exit(1)
      end
   end
@@ -284,14 +284,14 @@ def parse_lines_human( io, sep: ',', &block )
     skip_spaces( io )
 
     if io.peek == COMMENT        ## comment line
-      puts "skipping comment - peek >#{io.peek}< (#{io.peek.ord})"
+      # puts "skipping comment - peek >#{io.peek}< (#{io.peek.ord})"
       skip_until_eol( io )
       skip_newlines( io )
     elsif (c=io.peek; c==LF || c==CR || io.eof?)
-      puts "skipping blank - peek >#{io.peek}< (#{io.peek.ord})"
+      # puts "skipping blank - peek >#{io.peek}< (#{io.peek.ord})"
       skip_newlines( io )
     else
-      puts "start record - peek >#{io.peek}< (#{io.peek.ord})"
+      # puts "start record - peek >#{io.peek}< (#{io.peek.ord})"
 
       record = parse_record( io, sep: sep )
       ## note: requires block - enforce? how? why? why not?
@@ -315,7 +315,7 @@ def parse_lines_strict( io, sep: ',', &block )
   loop do
     break if io.eof?
 
-    puts "start record (strict) - peek >#{io.peek}< (#{io.peek.ord})"
+    # puts "start record (strict) - peek >#{io.peek}< (#{io.peek.ord})"
 
     record = parse_record_strict( io, sep: sep )
 
